@@ -93,6 +93,96 @@ Watch the AI:
 
 ---
 
+## 🏗️ Technical Architecture
+
+![Snake AI Technical Architecture](snake_ai_architecture.png)
+
+## Component Breakdown  
+
+## 1) SnakeEnv (Environment / Game Simulation)  
+Responsibility: Owns the truth of the world.
+- Grid-based movement (arcade style)
+- Food spawning with wall margin
+- Collision rules (walls, obstacles, tail)
+- Optional moving obstacles (curriculum)
+- Generates a feature vector for the agent
+## Key output: features = env.get_features()
+This includes:
+- Danger sensors (blocked straight/left/right)
+- Distance rays to wall/obstacle
+- Tail distance rays (self-body)
+- Food-ray visibility (straight/left/right)
+- Direction one-hot
+- Food relative position
+- Short-term memory (recent actions)
+
+## 2) Neural Policy (Genome → Action)  
+Responsibility: Convert features into a decision.
+- A genome is a flat parameter vector (weights + biases)
+- Unpacked into a small MLP:
+- Input: features
+- Hidden: ReLU
+- Output: 3 logits → action {left, straight, right}
+## Key output: action = argmax(policy(features))
+
+## 3) Fitness Evaluator (Learning Signal)
+Responsibility: Turn an episode into a scalar score for evolution.
+Rewards:
+- eating food (large)
+- moving closer to food (dense shaping)
+- survival (tiny)
+## Penalties:
+- moving away from food
+- oscillation (left-right spam)
+- revisiting recent cells (anti-circle)
+- stagnation (no progress for N steps)
+- death
+## This is the most important part of neuroevolution:
+## the evaluator defines what “good behavior” means.
+
+## 4) Evolution Engine (Genetic Algorithm)  
+Responsibility: Improve the population without gradients.
+- Selection: tournament selection
+- Elitism: keep the best genomes unchanged
+- Crossover: combine parent parameters
+- Mutation: random perturbations to weights
+## This produces the next generation:
+## population_next = evolve(population, fitness)
+
+## 5) Renderer (Turtle Live Demo)
+Responsibility: Show what the AI is learning without slowing training too much.
+- Uses headless training most of the time
+- Periodically runs a demo episode with the best genome
+Includes:
+- Border / grid scale to screen
+- HUD for gen, best score, avg score
+- dynamic demo steps (better agent → longer demo)
+
+## 6) Persistence Layer (Save/Resume)
+Responsibility: Make learning durable.
+- Saves the full population and metadata to a JSON file:
+- generation
+- best-ever
+- obstacle layout seed/state
+- population genomes
+Supports:
+- Q to quit + save
+- R to reset learning (delete save)
+
+## 7) Parallel Evaluation (Multiprocessing)
+Responsibility: Speed.
+- Evaluates many genomes simultaneously across CPU cores
+## Uses common random scenarios per generation so selection is fair: each genome faces the same set of seeds
+
+## Why this architecture works
+- Fast iteration: headless training + selective demos
+- Stable selection pressure: common scenarios + elite re-eval
+- Better navigation: ray sensors + memory + food visibility rays
+- Generalization: curriculum introduces complexity gradually
+
+---
+ 
+
 ## 🔍 Keywords
 
 Snake AI · Neuroevolution · Genetic Algorithm · Python · Game AI · Machine Learning · Artificial Intelligence
