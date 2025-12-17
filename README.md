@@ -137,8 +137,7 @@ Rewards:
 - revisiting recent cells (anti-circle)
 - stagnation (no progress for N steps)
 - death
-## This is the most important part of neuroevolution:
-## the evaluator defines what “good behavior” means.
+## This is the most important part of neuroevolution: the evaluator defines what “good behavior” means.
 
 ## 4) Evolution Engine (Genetic Algorithm)  
 Responsibility: Improve the population without gradients.
@@ -146,8 +145,7 @@ Responsibility: Improve the population without gradients.
 - Elitism: keep the best genomes unchanged
 - Crossover: combine parent parameters
 - Mutation: random perturbations to weights
-## This produces the next generation:
-## population_next = evolve(population, fitness)
+## This produces the next generation: population_next = evolve(population, fitness)
 
 ## 5) Renderer (Turtle Live Demo)
 Responsibility: Show what the AI is learning without slowing training too much.
