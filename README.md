@@ -1,4 +1,4 @@
-# 🐍 Snake AI by Lance Jepsen  
+# 🐍 Snake AI by Lance Jepsen (Neuroevolution in Python) 
 ### Neuroevolutionary Snake Agent in Python
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python)
